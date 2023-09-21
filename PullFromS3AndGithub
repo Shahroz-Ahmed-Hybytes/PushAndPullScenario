@@ -1,0 +1,67 @@
+import boto3
+import git
+import os
+import shutil
+
+
+AWS_ACCESS_KEY = 'AKIAUQYH2DEIQN5N5DHM'
+AWS_SECRET_KEY = 'MV8wSVQbAlq2zFngQGQVHynS1DAFqvYHEm2Ni5w+'
+BUCKET_NAME = 'unity-assets-test5006'
+S3_FOLDER = 'Assets/'  # Replace with the S3 folder path
+LOCAL_DIR = '/home/shahroz/Documents/Python/filesupload_recursively/S3/Project/Assets'  # Replace with the local directory path
+
+GITHUB_REPO_URL = 'https://github.com/github-repo2/webhooks_test2.git'  # Replace with your GitHub repository URL
+CLONE_DIR = '/home/shahroz/Documents/Python/filesupload_recursively/S3'  # Replace with the local GitHub clone directory
+
+def clone_github_repo(repo_url, clone_dir):
+    if os.path.exists(clone_dir):
+        shutil.rmtree(clone_dir)  # Remove the existing directory
+    git.Repo.clone_from(repo_url, clone_dir)
+    print(f'Cloned GitHub repository to {clone_dir}')
+
+def download_s3_folder(s3_client, bucket_name, s3_folder, local_dir):
+    objects = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=s3_folder)
+    for obj in objects.get('Contents', []):
+        s3_key = obj['Key']
+        local_path = os.path.join(local_dir, s3_key[len(s3_folder):])
+        
+        # Create directories if they don't exist
+        local_folder = os.path.dirname(local_path)
+        if not os.path.exists(local_folder):
+            os.makedirs(local_folder)
+        
+        s3_client.download_file(bucket_name, s3_key, local_path)
+        print(f'Downloaded {s3_key} from S3 to {local_path}')
+
+if __name__ == '__main__':
+    s3 = boto3.client(
+        's3',
+        aws_access_key_id=AWS_ACCESS_KEY,
+        aws_secret_access_key=AWS_SECRET_KEY
+    )
+    
+    # Clone GitHub repository
+    clone_github_repo(GITHUB_REPO_URL, CLONE_DIR)
+    print('GitHub repository cloned')
+    
+    # Download AWS S3 folder
+    download_s3_folder(s3, BUCKET_NAME, S3_FOLDER, LOCAL_DIR)
+    print(f'All files from S3 folder {S3_FOLDER} downloaded to {LOCAL_DIR}')
+
+
+#Steps we will follow for pull command
+# Script will set in cd / .git/hooks/post-merge
+# We will got to the directory where we want to pull our code either thats empty or already there is a code
+# Secondly, we will will go to github 
+# 
+# #Steps 
+#UPDATING CHANGING SO THAT WE CAN JUSTIFY THAT UPDATED CODE PULLED IN OUR LOCAL SYSTEM
+#AS YOU CAN SEE THERE IS NOT ASSETS FOLDER IN THIS GITHUB and S3 FOLDER WILL BE PULL FROM AWS S3 
+                 #Now i am going to run a Script directly.
+                 #first it cloned git repo and pull in a specific folder
+                 #then it will pull Assets folder from S3 and place in a cloned folder specific location. Where should be the Assets folder in a project.
+                 #images are heavy thats why it took time to download.
+                 #Now we will checkout code and that specific folder, either code pulled or not.
+                 #Code & S3 Folder Pulled.
+                      
+                   
