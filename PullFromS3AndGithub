@@ -4,8 +4,8 @@ import os
 import shutil
 
 
-AWS_ACCESS_KEY = 'AKIAUQYH2DEIQN5N5DHM'
-AWS_SECRET_KEY = 'MV8wSVQbAlq2zFngQGQVHynS1DAFqvYHEm2Ni5w+'
+AWS_ACCESS_KEY = '?'
+AWS_SECRET_KEY = '?'
 BUCKET_NAME = 'unity-assets-test5006'
 S3_FOLDER = 'Assets/'  # Replace with the S3 folder path
 LOCAL_DIR = '/home/shahroz/Documents/Python/filesupload_recursively/S3/Project/Assets'  # Replace with the local directory path
